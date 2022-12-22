@@ -15,23 +15,66 @@ import { useState } from "react";
 // todo - Mostre um alerta caso o login seja efetuado com sucesso (javascript alert). Investigue a função login() para entender como ter sucesso na requisição.
 
 export default function LoginForm() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isRunning, setIsRunning] = useState(false);
+  const [error, setError] = useState("");
+
   return (
     <div className="wrapper">
       <div className="login-form">
         <h1>Login Form 🐞</h1>
         {/* Coloque a mensagem de erro de login na div abaixo. Mostre a div somente se houver uma mensagem de erro. */}
-        <div className="errorMessage"></div>
+        <div className="errorMessage">{error}</div>
         <div className="row">
           <label htmlFor={"email"}>Email</label>
-          <input id={"email"} type={"email"} autoComplete="off" />
+          <input
+            onChange={(e) => {
+              setEmail(e.target.value);
+            }}
+            id={"email"}
+            type={"email"}
+            autoComplete="off"
+          />
         </div>
         <div className="row">
           <label htmlFor={"password"}>Password</label>
-          <input id={"password"} type={"password"} />
+          <input
+            onChange={(e) => {
+              setPassword(e.target.value);
+            }}
+            id={"password"}
+            type={"password"}
+          />
         </div>
 
         <div className="button">
-          <button>Login</button>
+          <button
+            disabled={isRunning === true}
+            onClick={() => {
+              if (!email || email.includes(" ")) {
+                return;
+              }
+              if (password.length < 6 || password.includes(" ")) {
+                return;
+              }
+              setError("");
+              setIsRunning(true);
+              login({ email, password })
+                .then(() => {
+                  alert("Login concluido.");
+                })
+
+                .catch((e) => {
+                  setError(e.message);
+                })
+                .finally(() => {
+                  setIsRunning(false);
+                });
+            }}
+          >
+            Login
+          </button>
         </div>
       </div>
     </div>
